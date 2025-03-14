@@ -1,0 +1,99 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --card-noise: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"></feTurbulence><feColorMatrix type="saturate" values="0"></feColorMatrix></filter><rect width="100" height="100" filter="url(#noiseFilter)"></rect></svg>');
+    --brand: 67, 100%, 50%;
+
+    --background: 0 0% 98%; /* Adjusted for better contrast */
+    --foreground: 240 10% 7%; /* Lighter */
+    --card: 0 0% 98% / 0.5; /* Increased transparency */
+    --card-foreground: 240 10% 7% / 0.9; /* Lighter */
+    --popover: 0 0% 98%; /* Adjusted for better contrast */
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 15%; /* Lighter */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 92%; /* Lighter */
+    --secondary-foreground: 240 5.9% 15%; /* Lighter */
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 55%; /* Lighter */
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 80%; /* Reduced intensity */
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+
+    /* Light mode background image colors */
+    --color-background-image-base: hsla(0, 0%, 95%, 1);
+    --color-background-image-accent-1: hsla(226, 100%, 46%, 0.33); /* indigo */
+    --color-background-image-accent-2: hsla(251, 51%, 89%, 1); /* violet */
+    --color-background-image-accent-3: hsla(272, 87%, 54%, 1); /* purple */
+    --color-background-image-accent-4: hsla(207, 64%, 88%, 1); /* blue */
+    --color-background-image-accent-5: hsla(0, 20%, 99%, 1); /* slate */
+    --color-background-image-accent-6: hsla(339, 100%, 45%, 0.19); /* crimson */
+    --color-background-image-accent-7: hsla(223, 47%, 91%, 1); /* indigo */
+  }
+
+  .dark {
+    --card-noise: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"></feTurbulence><feColorMatrix type="saturate" values="0"></feColorMatrix></filter><rect width="100" height="100" filter="url(#noiseFilter)"></rect></svg>');
+    --brand: 67, 100%, 50%;
+
+    --background: 240 10% 10%; /* Lighter */
+    --foreground: 0 0% 95%; /* Adjusted for better contrast */
+    --card: 240 10% 10% / 0.75; /* Increased transparency */
+    --card-foreground: 0 0% 95%; /* Adjusted for better contrast */
+    --popover: 240 10% 10%; /* Lighter */
+    --popover-foreground: 0 0% 95%; /* Adjusted for better contrast */
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 30%; /* Lighter */
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 30%; /* Lighter */
+    --muted-foreground: 240 5% 80%; /* Lighter */
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 25%; /* Reduced intensity */
+    --input: 240 3.7% 30%; /* Lighter */
+    --ring: 240 4.9% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+
+    /* Dark mode background image colors */
+    --color-background-image-base: hsla(0, 11%, 7%, 1);
+    --color-background-image-accent-1: hsla(226, 94%, 68%, 0.565);
+    --color-background-image-accent-2: hsla(254, 50%, 34%, 1);
+    --color-background-image-accent-3: hsla(272, 87%, 54%, 1);
+    --color-background-image-accent-4: hsla(207, 100%, 23%, 1);
+    --color-background-image-accent-5: hsla(0, 11%, 7%, 1);
+    --color-background-image-accent-6: hsla(331, 98%, 57%, 0.318);
+    --color-background-image-accent-7: hsla(223, 52%, 30%, 1);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
