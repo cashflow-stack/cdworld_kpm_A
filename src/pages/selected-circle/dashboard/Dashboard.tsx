@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useMemo } from "react";
+import { useEffect, useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,8 +17,6 @@ import {
   ArrowDownUp,
   Coins,
 } from "lucide-react";
-import { AppDispatch, RootState } from "@/toolkit/store";
-import { useDispatch, useSelector } from "react-redux";
 import { fetchTransactionsByDate } from "./state/recentActivitySlice";
 import {
   CurrencyFormatter,
@@ -38,15 +36,80 @@ import { memo } from "react"; // Added import for memo
 import { PendingCustomersCard } from "./widgets/PendingCustomersCard";
 import { fetchPendingCustomersAsync } from "./state/pendingCustomersSlice";
 import MemoizedCashInHand from "./widgets/CashInHand";
+import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+
+// New DashboardLoader component
+const DashboardLoader = memo(() => {
+  return (
+    <div className="grid gap-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
+      <div className="grid pt-4 sm:pt-0 auto-rows-max items-start gap-3 md:gap-8 lg:col-span-2">
+        {/* Collection Comparison Chart Skeleton */}
+        <Card>
+          <CardHeader className="space-y-1">
+            <CardTitle className="h-7 w-44 animate-pulse rounded-md bg-muted" />
+            <CardDescription className="h-5 w-60 animate-pulse rounded-md bg-muted" />
+          </CardHeader>
+          <CardContent>
+            <div className="h-72 w-full animate-pulse rounded-md bg-muted" />
+          </CardContent>
+        </Card>
+
+        {/* Cash in Hand Skeleton */}
+        <Card>
+          <CardHeader className="space-y-1">
+            <CardTitle className="h-7 w-36 animate-pulse rounded-md bg-muted" />
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 w-full animate-pulse rounded-md bg-muted" />
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 md:gap-8">
+        {/* Outstanding Amount Skeleton */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="h-7 w-40 animate-pulse rounded-md bg-muted" />
+          </CardHeader>
+          <CardContent>
+            <div className="h-52 w-full animate-pulse rounded-md bg-muted" />
+          </CardContent>
+        </Card>
+
+        {/* Recent Activity Skeleton */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="h-7 w-36 animate-pulse rounded-md bg-muted" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {Array(5)
+              .fill(null)
+              .map((_, i) => (
+                <div key={i} className="flex justify-between items-center py-2">
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
+                    <div className="space-y-2">
+                      <div className="h-4 w-32 animate-pulse rounded-md bg-muted" />
+                      <div className="h-3 w-24 animate-pulse rounded-md bg-muted" />
+                    </div>
+                  </div>
+                  <div className="h-5 w-20 animate-pulse rounded-md bg-muted" />
+                </div>
+              ))}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+});
+
+DashboardLoader.displayName = "DashboardLoader";
 
 export default function Dashboard() {
-  const dispatch = useDispatch<AppDispatch>();
-  const { selectedCircle } = useSelector(
-    (state: RootState) => state.dataHelper
-  );
-  const { status, cashAccount } = useSelector(
-    (state: RootState) => state.chartsData
-  );
+  const dispatch = useAppDispatch();
+  const { selectedCircle } = useAppSelector((state) => state.dataHelper);
+  const { status, cashAccount } = useAppSelector((state) => state.chartsData);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Guard clause for missing circle
   if (!selectedCircle?.id) {
@@ -59,6 +122,7 @@ export default function Dashboard() {
   // Combine initial data fetching
   useEffect(() => {
     const fetchInitialData = async () => {
+      setIsLoading(true);
       try {
         await Promise.all([
           dispatch(
@@ -82,6 +146,8 @@ export default function Dashboard() {
         ]);
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -99,12 +165,12 @@ export default function Dashboard() {
     }
   }, [dispatch, cashAccount, status]);
 
-  if (status === "success") {
-    return <MemoizedDashboardScreen />;
+  if (isLoading || status === "loading") {
+    return <DashboardLoader />;
   } else if (status === "failed") {
     return <div>Failed to fetch dashboard data</div>;
-  } else { 
-    return <div>Loading dashboard data...</div>;
+  } else {
+    return <MemoizedDashboardScreen />;
   }
 }
 
@@ -129,11 +195,10 @@ const DashboardScreen = () => {
 
 const MemoizedDashboardScreen = memo(DashboardScreen); // Memoized component
 
-
 function RecentActivity() {
   const { t } = useTranslation();
-  const { status, transactions } = useSelector(
-    (state: RootState) => state.recentActivity
+  const { status, transactions } = useAppSelector(
+    (state) => state.recentActivity
   );
 
   const selectIcon = useCallback(({ type }: { type: TransactionType }) => {
@@ -228,4 +293,5 @@ export {
   MemoizedDashboardScreen as DashboardScreen,
   MemoizedCashInHand as CashInHand,
   MemoizedRecentActivity as RecentActivity,
+  DashboardLoader,
 };

@@ -5,28 +5,26 @@ import { byCustomAdminTransaction } from "@/models/customModels/customQueries";
 
 type TransacitonProps = {
   circleID: string;
-  circleDateOfCreation: string;
   fromDate: string;
   toDate: string;
 };
 
 export const getTransactions = async ({
   circleID,
-  circleDateOfCreation,
   fromDate,
   toDate,
 }: TransacitonProps): Promise<Transaction[]> => {
   const result: GraphQLResult<any> = await client.graphql({
     query: `query GetTransactions(
         $circleID: ID!,
-        $circleDateOfCreation: ModelStringKeyConditionInput,
+        $dateTime: ModelStringKeyConditionInput,
         $filter: ModelTransactionFilterInput,
         $limit: Int!,
         $sortDirection: ModelSortDirection!
         ) {
-            byCircleTransaction(
+            byCircleTransactionDate(
                 circleID: $circleID,
-                circleDateOfCreation: $circleDateOfCreation,
+                dateTime: $dateTime,
                 filter: $filter,
                 limit: $limit,
                 sortDirection: $sortDirection
@@ -66,8 +64,7 @@ export const getTransactions = async ({
         `,
     variables: {
       circleID: circleID,
-      circleDateOfCreation: { eq: circleDateOfCreation },
-      filter: { dateTime: { between: [fromDate, toDate] } },
+      dateTime: { between: [fromDate, toDate] },
       limit: 15000,
       sortDirection: ModelSortDirection.DESC,
     },
@@ -78,7 +75,7 @@ export const getTransactions = async ({
       `Failed to fetch transactions ${JSON.stringify(result.errors)}`
     );
   }
-  return result.data.byCircleTransaction.items;
+  return result.data.byCircleTransactionDate.items;
 };
 
 export const getTransactionsByDate = async ({

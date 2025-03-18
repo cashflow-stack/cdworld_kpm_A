@@ -2833,6 +2833,37 @@ export type ByCircleTransactionQuery = {
   } | null,
 };
 
+export type ByCircleTransactionDateQueryVariables = {
+  circleID: string,
+  dateTime?: ModelStringKeyConditionInput | null,
+  filter?: ModelTransactionFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  sortDirection?: ModelSortDirection | null,
+};
+
+export type ByCircleTransactionDateQuery = {
+  byCircleTransactionDate?:  {
+    __typename: "ModelTransactionConnection",
+    items:  Array< {
+      __typename: "Transaction",
+      adminID: string,
+      amount: number,
+      circleDateOfCreation: string,
+      circleID: string,
+      createdAt: string,
+      dateTime: string,
+      expireAt?: number | null,
+      id: string,
+      initialAmount?: number | null,
+      transactionType: TransactionType,
+      updatedAt: string,
+      updatedDate?: string | null,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
 export type ByCircleVehicleQueryVariables = {
   circleDateOfCreation?: ModelStringKeyConditionInput | null,
   circleID: string,

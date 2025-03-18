@@ -5,6 +5,7 @@ import { RootState } from "@/toolkit/store";
 import { addCircle, lockCircle } from "@/api/circleApi";
 import { addNewCircle, updateCircleData } from "./circlesSlice";
 import { adminData, onAddNewCircle } from "@/toolkit/helper/helperSlice";
+import { processDate } from "@/toolkit/helper/helperFunctions";
 
 //! Create a new circle
 export type CircleOperationState = {
@@ -102,13 +103,14 @@ export const createCircle = createAsyncThunk<
       return rejectWithValue("Admin not found");
     }
     const { id, emailId } = admin;
-
+    const lastClosingEntryDate = substractDays(dateOfCreation, 1);
     try {
       const response = await addCircle({
         adminID: id,
         adminEmailId: emailId,
         circleName,
         dateOfCreation,
+        lastClosingEntryDate,
         day,
       });
       // ! Dispatch the new circle to the circlesSlice
@@ -156,3 +158,16 @@ export const circleLockOperation = createAsyncThunk<
     }
   }
 );
+
+function substractDays(date: string, days: number): string {
+  /**
+   * example date: 2023-10-01
+   * example days: 1
+   * This function takes a date string in the format YYYY-MM-DD and subtracts the given number of days from it.
+   * It returns the new date string is YYYY-MM-DDTHH:mm:ss.sssZ format.
+   * result: 2023-09-30T00:00:00.000Z
+   */
+  const result = new Date(date);
+  result.setDate(result.getDate() - days);
+  return processDate({ operation: "end", date: result });
+}

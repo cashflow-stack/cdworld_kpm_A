@@ -180,11 +180,6 @@ const router = createBrowserRouter(
       element: <ErrorPage />,
     },
   ],
-  {
-    future: {
-      v7_relativeSplatPath: true,
-    },
-  }
 );
 
 export default router;

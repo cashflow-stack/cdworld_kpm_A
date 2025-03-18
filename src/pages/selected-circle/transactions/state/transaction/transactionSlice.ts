@@ -249,7 +249,6 @@ export const fetchTransactions = createAsyncThunk<
       // Fetch transactions
       const response = await getTransactions({
         circleID: selectedCircle.id,
-        circleDateOfCreation: selectedCircle.dateOfCreation,
         fromDate: fromDate,
         toDate: nextDateISOString,
       });

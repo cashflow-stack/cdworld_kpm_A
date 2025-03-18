@@ -13,10 +13,6 @@ import {
   Weekday,
 } from "@/models/API";
 import { v4 as uuidv4 } from "uuid";
-import {
-  formatYYYYDDMMToISOString,
-  processDate,
-} from "@/toolkit/helper/helperFunctions";
 import { SimplifiedTransaction } from "@/models/customModels/customModels";
 // import { updateCircle } from "@/models/mutations";
 
@@ -130,6 +126,7 @@ interface NewCircleDetails {
   adminEmailId: string;
   adminID: string;
   circleName: string;
+  lastClosingEntryDate: string;
   dateOfCreation: string;
   day: Weekday;
 }
@@ -137,6 +134,7 @@ interface NewCircleDetails {
 export async function addCircle({
   circleName,
   dateOfCreation,
+  lastClosingEntryDate,
   day,
   adminEmailId,
   adminID,
@@ -199,14 +197,11 @@ export async function addCircle({
     cashflowOut: 0,
     circleID: circleId,
     closingBalance: 0,
-    closingEntryDate: formatYYYYDDMMToISOString(dateOfCreation),
+    closingEntryDate: lastClosingEntryDate,
     description: "Initial Entry",
     simplifiedTransactions: jsonDummyObject,
     openingBalance: 0,
-    openingEntryDate: processDate({
-      dateString: dateOfCreation,
-      operation: "start",
-    }),
+    openingEntryDate: lastClosingEntryDate,
     outstandingAmount: 0,
     closingSnapshot: closingSnapshot,
   };

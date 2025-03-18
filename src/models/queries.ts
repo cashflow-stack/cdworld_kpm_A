@@ -593,6 +593,45 @@ export const byCircleTransaction = /* GraphQL */ `query ByCircleTransaction(
   APITypes.ByCircleTransactionQueryVariables,
   APITypes.ByCircleTransactionQuery
 >;
+export const byCircleTransactionDate = /* GraphQL */ `query ByCircleTransactionDate(
+  $circleID: ID!
+  $dateTime: ModelStringKeyConditionInput
+  $filter: ModelTransactionFilterInput
+  $limit: Int
+  $nextToken: String
+  $sortDirection: ModelSortDirection
+) {
+  byCircleTransactionDate(
+    circleID: $circleID
+    dateTime: $dateTime
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    sortDirection: $sortDirection
+  ) {
+    items {
+      adminID
+      amount
+      circleDateOfCreation
+      circleID
+      createdAt
+      dateTime
+      expireAt
+      id
+      initialAmount
+      transactionType
+      updatedAt
+      updatedDate
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.ByCircleTransactionDateQueryVariables,
+  APITypes.ByCircleTransactionDateQuery
+>;
 export const byCircleVehicle = /* GraphQL */ `query ByCircleVehicle(
   $circleDateOfCreation: ModelStringKeyConditionInput
   $circleID: ID!
