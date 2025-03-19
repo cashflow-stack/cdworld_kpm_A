@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { Circle, UpdateCircleInput, Weekday } from "@/models/API";
 import { RootState } from "@/toolkit/store";
-import { addCircle, lockCircle } from "@/api/circleApi";
+import { addCircle, lockCircle, updateCircleDetails } from "@/api/circleApi";
 import { addNewCircle, updateCircleData } from "./circlesSlice";
 import { adminData, onAddNewCircle } from "@/toolkit/helper/helperSlice";
 import { processDate } from "@/toolkit/helper/helperFunctions";
@@ -37,6 +37,7 @@ const circleOperationSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    //! Create a new circle
     builder
       .addCase(createCircle.pending, (state) => {
         state.status = "creating";
@@ -55,7 +56,9 @@ const circleOperationSlice = createSlice({
         state.error = action.payload
           ? String(action.payload)
           : "An unknown error occurred";
-      })
+      });
+    //! Lock/Unlock a circle
+    builder
       .addCase(circleLockOperation.pending, (state) => {
         state.status = "updating";
         state.error = undefined;
@@ -69,6 +72,26 @@ const circleOperationSlice = createSlice({
         }
       )
       .addCase(circleLockOperation.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload
+          ? String(action.payload)
+          : "An unknown error occurred";
+      });
+    //! Update circle data
+    builder
+      .addCase(updateCircle.pending, (state) => {
+        state.status = "updating";
+        state.error = undefined;
+      })
+      .addCase(
+        updateCircle.fulfilled,
+        (state, action: PayloadAction<Circle>) => {
+          state.status = "updated";
+          state.circle = action.payload;
+          state.error = undefined;
+        }
+      )
+      .addCase(updateCircle.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload
           ? String(action.payload)
@@ -124,6 +147,7 @@ export const createCircle = createAsyncThunk<
   }
 );
 
+// ! Lock/Unlock a circle
 interface LockCircleInput {
   circle: Circle;
   lock: boolean;
@@ -152,6 +176,30 @@ export const circleLockOperation = createAsyncThunk<
       };
       dispatch(updateCircleData(circleData));
       return circleData;
+    } catch (e: any) {
+      const errorMessage = e.response.data.message;
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
+//! Update circle data
+export const updateCircle = createAsyncThunk<
+  Circle,
+  { circle: Circle; updatedName: string; updatedDay: Weekday },
+  { rejectValue: string }
+>(
+  "circleOperations/updateCircleData",
+  async ({ circle, updatedDay, updatedName }, { rejectWithValue }) => {
+    try {
+      const response = await updateCircleDetails({
+        id: circle.id,
+        dateOfCreation: circle.dateOfCreation,
+        adminID: circle.adminID,
+        updatedName: updatedName,
+        updatedDay: updatedDay,
+      });
+      return response;
     } catch (e: any) {
       const errorMessage = e.response.data.message;
       return rejectWithValue(errorMessage);

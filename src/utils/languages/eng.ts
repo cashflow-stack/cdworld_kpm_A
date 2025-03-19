@@ -72,6 +72,10 @@ export default {
     close: "Close",
     submit: "Submit",
   },
+  updateCircle: {
+    title: "Update Circle",
+    description: "Update the circle details below.",
+  },
   dashboard: {
     outstandingAmount: "Outstanding Amount",
     failedToFetchData: "Failed to fetch data for the chart.",

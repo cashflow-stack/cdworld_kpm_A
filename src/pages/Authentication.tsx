@@ -12,6 +12,37 @@ import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
 function AuthClient() {
   const { user } = useAuthenticator((context) => [context.user]);
   const navigate = useNavigate();
+
+  const components = {
+    Header() {
+      return (
+        <div className="flex flex-col items-center py-6 space-y-2">
+          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#ff80b5] to-[#9089fc]">
+            Welcome to Cashflow
+          </h1>
+          <p className="text-gray-400 text-sm font-light">
+            Empower your financial journey with us
+          </p>
+        </div>
+      );
+    },
+    Footer() {
+      return (
+        <div className="flex flex-col items-center py-6 space-y-2">
+          <p className="text-gray-400 text-sm font-light">
+            By signing up, you agree to our{" "}
+            <a href="#" className="text-[#ff80b5] hover:underline">
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a href="#" className="text-[#ff80b5] hover:underline">
+              Privacy Policy
+            </a>
+          </p>
+        </div>
+      );
+    },
+  };
   /**
    * Defines the form fields for the sign-up process.
    */
@@ -40,7 +71,7 @@ function AuthClient() {
       navigate("/", { replace: true });
     }
   }, [user]);
-  return <Authenticator formFields={formFields} />;
+  return <Authenticator formFields={formFields} components={components} />;
 }
 
 export default function Authentication() {
@@ -59,9 +90,7 @@ export default function Authentication() {
             }}
           />
         </div>
-        <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-14">
-          <AuthClient />
-        </div>
+        <AuthClient />
         <div
           className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
           aria-hidden="true"

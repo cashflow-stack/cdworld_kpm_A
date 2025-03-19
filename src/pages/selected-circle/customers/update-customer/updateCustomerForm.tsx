@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAppSelector } from "@/hooks/reduxHooks";
 import { useEffect } from "react";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { FormSelect } from "@/components/FormFields";
 
 const updateCustomerSchema = z.object({
   customerName: z.string().min(1, "Customer name is required"),
@@ -34,6 +35,7 @@ const updateCustomerSchema = z.object({
   address: z.string().min(1, "Address is required"),
   emptyCheque: z.boolean().default(false),
   promissoryNote: z.boolean().default(false),
+  cityID: z.string().optional(),
 });
 
 type UpdateCustomerFormValues = z.infer<typeof updateCustomerSchema>;
@@ -49,6 +51,7 @@ export function UpdateCustomerForm({
 }: UpdateCustomerFormProps) {
   const dispatch = useAppDispatch();
   const { status } = useAppSelector((state) => state.updateCustomer);
+  const { cities } = useAppSelector((state) => state.cities);
   const form = useForm<UpdateCustomerFormValues>({
     resolver: zodResolver(updateCustomerSchema),
     defaultValues: {
@@ -58,6 +61,7 @@ export function UpdateCustomerForm({
       address: customer.customerAddress,
       emptyCheque: customer.emptyCheque ?? false,
       promissoryNote: customer.promissoryNote ?? false,
+      cityID: customer.cityId,
     },
   });
 
@@ -76,6 +80,7 @@ export function UpdateCustomerForm({
         customerId: customer.id,
         adminId: customer.adminID,
         phoneNumber: `+91${data.phoneNumber}`,
+        cityID: data.cityID ?? null,
       })
     );
   }
@@ -137,6 +142,17 @@ export function UpdateCustomerForm({
               <FormMessage />
             </FormItem>
           )}
+        />
+
+        <FormSelect
+          control={form.control}
+          name="cityID"
+          label="City"
+          placeholder="Select city"
+          keyPair={cities.map((city) => ({
+            key: city.name,
+            value: city.id,
+          }))}
         />
 
         <FormField

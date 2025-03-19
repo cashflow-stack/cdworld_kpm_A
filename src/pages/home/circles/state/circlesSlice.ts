@@ -26,14 +26,25 @@ const circlesSlice = createSlice({
       localStorage.setItem("circles", JSON.stringify(state.circles));
     },
     updateCircleData: (state, action: PayloadAction<Circle>) => {
+      console.log("Updating circle data:", action.payload);
+      // update the circle data in the state
+      const updatedCircle = action.payload;
       const index = state.circles.findIndex(
-        (circle) => circle.id === action.payload.id
+        (circle) => circle.id === updatedCircle.id
       );
       if (index !== -1) {
-        console.log("Updating circle data", action.payload);
-        state.circles[index] = action.payload;
-        // update local storage
-        localStorage.setItem("circles", JSON.stringify(state.circles));
+        state.circles[index] = updatedCircle;
+      }
+      // update local storage
+      localStorage.setItem("circles", JSON.stringify(state.circles));
+      // update the circle data in local storage
+      const circlesFromStorage = localStorage.getItem("circles");
+      if (circlesFromStorage) {
+        const circles: Circle[] = JSON.parse(circlesFromStorage);
+        const updatedCircles = circles.map((circle) =>
+          circle.id === updatedCircle.id ? updatedCircle : circle
+        );
+        localStorage.setItem("circles", JSON.stringify(updatedCircles));
       }
     },
     deleteCircle: (state, action: PayloadAction<string>) => {

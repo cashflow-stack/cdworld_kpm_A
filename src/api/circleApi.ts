@@ -10,11 +10,11 @@ import {
   CreateCMSSubscriptionInput,
   CreateLoanSerialNumberInput,
   UpdateCircleInput,
+  UpdateCityInput,
   Weekday,
 } from "@/models/API";
 import { v4 as uuidv4 } from "uuid";
 import { SimplifiedTransaction } from "@/models/customModels/customModels";
-// import { updateCircle } from "@/models/mutations";
 
 /**
  * *🔥Retrieves a list of circles for a given admin.
@@ -265,26 +265,84 @@ export async function addCircle({
  * @returns A Promise that resolves to the updated Circle object.
  * @throws An error if the circle update fails.
  */
-export async function updateCircleDetails(circle: Circle): Promise<Circle> {
+interface CircleDetails {
+  id: string;
+  adminID: string;
+  updatedName: string;
+  dateOfCreation: string;
+  updatedDay: Weekday;
+}
+export async function updateCircleDetails({
+  id,
+  dateOfCreation,
+  adminID,
+  updatedName,
+  updatedDay,
+}: CircleDetails): Promise<Circle> {
+  const updatedCircle: UpdateCircleInput = {
+    id: id,
+    dateOfCreation: dateOfCreation,
+    adminID: adminID,
+    circleName: updatedName,
+    day: updatedDay,
+  };
+  const updatedCity: UpdateCityInput = {
+    id: id,
+    adminID: adminID,
+    name: updatedName,
+  };
   try {
     const { data, errors }: GraphQLResult<any> = await client.graphql({
-      query: `mutation UpdateCircle($circleInput: UpdateCircleInput!){
-              updateCircle(input: $circleInput){
-                circleName
-                createdAt
-                dateOfCreation
-                day
-                id
-                updatedAt
-              }
-            }`,
-      variables: { circleInput: circle },
+      query: `
+      mutation UpdateCircleAndCity(
+        $circleInput: UpdateCircleInput!, 
+        $cityInput: UpdateCityInput!
+      ) {
+        updateCircle(input: $circleInput) {
+        circleName
+        id
+        dateOfCreation
+        day
+        adminEmailId
+        adminID
+        createdAt
+        updatedAt
+        }
+        updateCity(input: $cityInput) {
+        id
+        }
+      }
+      `,
+      variables: {
+        circleInput: updatedCircle,
+        cityInput: updatedCity,
+      },
     });
     if (errors) {
       console.error(errors);
       throw new Error(`Failed to update circle ${errors}`);
     }
-    return data.updateCircle;
+    return data.updateCircle as Circle;
+
+    /** result model
+     * {
+  "data": {
+    "updateCircle": {
+      "circleName": "Testing Circle Date",
+      "id": "ee193a22-6042-4bd6-b1c6-b81783f86898",
+      "dateOfCreation": "2025-03-17",
+      "day": "TUESDAY",
+      "adminEmailId": "arr9182@gmail.com",
+      "adminID": "41135d8a-6071-70ab-fea8-2f7eb37c775e",
+      "createdAt": "2025-03-17T15:31:08.571Z",
+      "updatedAt": "2025-03-18T09:19:26.644Z"
+    },
+    "updateCity": {
+      "id": "ee193a22-6042-4bd6-b1c6-b81783f86898"
+    }
+  }
+}
+     */
   } catch (error) {
     console.error(error);
     throw new Error(`Failed to update circle ${error}`);

@@ -23,6 +23,7 @@ import { addSelectedCircleData } from "@/toolkit/helper/helperSlice";
 import { useTranslation } from "react-i18next";
 import { formatDateToYYYYMMDD } from "@/toolkit/helper/helperFunctions";
 import { circleLockOperation } from "./state/circleOperationSlice";
+import { UpdateCircleDialog } from "./widgets/UpdateCircleDialog";
 
 function Circles() {
   const { member, admin } = useSelector(
@@ -62,7 +63,10 @@ export default Circles;
 
 const CirclesPage = memo(() => {
   const { t } = useTranslation();
-  const { circles, status } = useSelector((state: RootState) => state.circles, shallowEqual);
+  const { circles, status } = useSelector(
+    (state: RootState) => state.circles,
+    shallowEqual
+  );
   const [search, setSearch] = useState<string>("");
   if (status === "success") {
     return (
@@ -163,14 +167,24 @@ function CircleCard({ circle }: CircleCardProps) {
     circle.day === Weekday.DAILY
       ? t("finance.daily")
       : circle.day === Weekday.MONTHLY
-      ? t("finance.monthly")
-      : t("finance.weekly");
+        ? t("finance.monthly")
+        : t("finance.weekly");
   const circleName = circle.circleName;
   const dispatch = useDispatch<AppDispatch>();
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
 
   const handleSelectCircle = useCallback(() => {
     dispatch(addSelectedCircleData(circle));
   }, [dispatch, circle]);
+
+  const handleUpdateCircle = useCallback(
+    (updatedCircle: { circleName: string; day: Weekday }) => {
+      // You'll need to implement the actual update action/thunk
+      console.log("Updating circle:", { ...circle, ...updatedCircle });
+      // Example: dispatch(updateCircle({ id: circle.id, ...updatedCircle }));
+    },
+    [circle]
+  );
 
   return (
     <ContextMenu>
@@ -215,12 +229,7 @@ function CircleCard({ circle }: CircleCardProps) {
         >
           {circle.isLocked ? "Unlock" : "Lock"} circle
         </ContextMenuItem>
-        <ContextMenuItem
-          disabled
-          onClick={() => {
-            console.log("Update circle");
-          }}
-        >
+        <ContextMenuItem onClick={() => setIsUpdateDialogOpen(true)}>
           Update circle
         </ContextMenuItem>
         <ContextMenuItem
@@ -232,6 +241,14 @@ function CircleCard({ circle }: CircleCardProps) {
           Delete circle
         </ContextMenuItem>
       </ContextMenuContent>
+
+      {/* Add the UpdateCircleDialog component */}
+      <UpdateCircleDialog
+        circle={circle}
+        isOpen={isUpdateDialogOpen}
+        onOpenChange={setIsUpdateDialogOpen}
+        onUpdate={handleUpdateCircle}
+      />
     </ContextMenu>
   );
 }

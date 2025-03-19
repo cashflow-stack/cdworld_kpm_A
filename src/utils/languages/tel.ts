@@ -59,6 +59,10 @@ export default {
     next: "తరువాత",
     date: "ప్రారంభ తేదీ (ఉన్న లైన్లకు)",
   },
+  updateCircle: {
+    title: "లైన్‌ను నవీకరించండి",
+    description: "లైన్ వివరాలను నవీకరించండి",
+  },
   createNewMemberForm: {
     name: "పేరు",
     namePlaceholder: "పేరు నమోదు చేయండి",

@@ -20,6 +20,7 @@ interface CustomerUpdateRequestProps {
   aadharNumber: string | null;
   customerName: string | null;
   phoneNumber: string | null;
+  cityID: string | null;
   address: string | null;
   emptyCheque?: boolean | null;
   promissoryNote?: boolean | null;
@@ -38,6 +39,7 @@ export const updateCustomerData = createAsyncThunk(
       address,
       emptyCheque,
       promissoryNote,
+      cityID,
     }: CustomerUpdateRequestProps,
     { rejectWithValue }
   ) => {
@@ -48,6 +50,7 @@ export const updateCustomerData = createAsyncThunk(
     const updatedCustomer: UpdateCustomerInput = {
       id: customerId,
       adminID: adminId,
+      cityID,
       customers: [
         {
           address: address ?? oldCustomer.customerAddress,
@@ -78,8 +81,8 @@ const updateCustomerSlice = createSlice({
   name: "updateCustomer",
   initialState,
   reducers: {
-      resetUpdateState: (state) => {
-        state.status = "idle";
+    resetUpdateState: (state) => {
+      state.status = "idle";
       state.error = null;
     },
   },
@@ -89,11 +92,11 @@ const updateCustomerSlice = createSlice({
         state.status = "loading";
         state.error = null;
       })
-        .addCase(updateCustomerData.fulfilled, (state) => {
+      .addCase(updateCustomerData.fulfilled, (state) => {
         state.status = "success";
         state.error = null;
       })
-        .addCase(updateCustomerData.rejected, (state, action) => {
+      .addCase(updateCustomerData.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
       });
